@@ -1,48 +1,15 @@
-import math as m
-import random as rm
-import numpy as np
-import scipy.stats as stats
-
-from data_generator import *
-from local_randomizer import *
-from sliding_window import *
-from metric import *
-
-itemset_len = 1000
-k = 100
-
-user_num = 50000
-data_len = 10
-
-omega = 5
-epsilon = 5
-
-total_step = 100
-
-sim_budget, data_budget = 0.1*epsilon, 0.9*epsilon
-sim_randomizer = Harmony(0, data_len, sim_budget/omega)
-data_randomizer = RAPPOR(itemset_len, data_budget/omega)
-generator = ZipfGenerator(itemset_len, user_num, data_len)
-window = SlidingWindow(omega, data_budget)
-
-data_randomizer.enable_render()
-generator.enable_render()
-
-hits = np.zeros(user_num)
-record = np.zeros((total_step, 6))
-
-# first release
-window.update(epsilon/omega)
-# collect data
-data = generator.generate()
-true_counts = calc_counts(data, itemset_len)
-generator.transit()
-private_counts = data_randomizer.randomize_group(data)
-counts = data_randomizer.aggregate(private_counts)
-top_k = calc_top_k(counts, k)
+from global_setting import *
 
 def run():
-    global counts, top_k
+    # first release
+    window.update(epsilon/omega)
+    # collect data
+    data = generator.generate()
+    true_counts = calc_counts(data, itemset_len)
+    generator.transit()
+    private_counts = data_randomizer.randomize_group(data)
+    counts = data_randomizer.aggregate(private_counts)
+    top_k = calc_top_k(counts, k)
     for step in range(total_step):
         print(f'\nSTEP {step+1}')
         # generate data

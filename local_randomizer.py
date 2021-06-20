@@ -18,10 +18,10 @@ class RAPPOR:
         self.q = 1/(m.exp(epsilon)+1)
 
     def randomize(self, data):
+        private_data = np.zeros(self.itemset_len, dtype=int)
         # onehot encoding
-        item = rm.choice(data)
-        if item!=0:
-            private_data[item-1] = 1
+        if data!=0:
+            private_data[data-1] = 1
             
         # randomized response
         private_data = np.where(private_data==1, 
@@ -40,9 +40,8 @@ class RAPPOR:
 
         # onehot encoding
         for i in iterator:
-            item = rm.choice(data[i])
-            if item!=0:
-                private_data[i][item-1] = 1
+            if data[i]!=0:
+                private_data[i][data[i]-1] = 1
 
         # randomized response
         private_data = np.where(private_data==1, 
@@ -53,13 +52,6 @@ class RAPPOR:
     def aggregate(self, private_data):
         return (private_data.sum(0) - private_data.shape[0]*self.q)/(self.p - self.q)
 
-    def enable_render(self, render='True'):
-        self.render = render
-
-class SuccinctHistogram:
-    def __init__(self):
-        pass
-    
     def enable_render(self, render='True'):
         self.render = render
 
