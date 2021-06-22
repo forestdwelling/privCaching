@@ -29,23 +29,6 @@ def run_uniform():
         record[step] = utility_metrics(estimate_counts, true_counts, k)
     print('Mean:', record.mean(0))
 
-def run_DSFT():
-    global threshold
-    global cop
-    generator.generate()
-    randomizer.set_budget(epsilon/cop)
-    for step in range(total_step):
-        print(f'STEP {step+1} :')
-        generator.transit()
-        # randomize and aggregate
-        sample_data = generator.sample()
-        private_counts = randomizer.randomize_group(sample_data)
-        estimate_counts = randomizer.aggregate(private_counts)
-        # record metrics
-        true_counts= calc_counts(generator.data, itemset_len)
-        record[step] = utility_metrics(estimate_counts, true_counts, k)
-    print('Mean:', record.mean(0))
-
 # # first release
 # window.update(epsilon/omega)
 # # collect data

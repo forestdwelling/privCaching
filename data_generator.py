@@ -13,21 +13,19 @@ class ZipfGenerator:
         self.p = np.arange(1, itemset_len+1)**(-1.5)
         self.p /= self.p.sum()
         # transit ratio distribution
-        mu, sigma = 0.2, 0.2
+        mu, sigma = 0.9, 0.2
         self.transit_ratio = stats.truncnorm(-mu/sigma, (1 - mu)/sigma, loc=mu, scale=sigma)
         # self.transit_ratio = stats.binom(1, 0.1)
 
         self.data = np.zeros((self.user_num, self.data_len), dtype=int)
-        print('Generating Zipf distribution users\' data...')
-        for i in trange(self.user_num):
+        for i in range(self.user_num):
             self.data[i] = np.random.choice(a=self.x, size=self.data_len, replace=False, p=self.p)
 
     def transit(self):
-        # self.r = self.transit_ratio.rvs()
-        self.r = 1
+        self.r = self.transit_ratio.rvs()
         items = np.random.choice(a=self.x, size=int(self.r*self.itemset_len), replace=False) - 1
         self.x[items] = np.random.permutation(self.x[items])
-        for i in trange(self.user_num):
+        for i in range(self.user_num):
             self.data[i] = np.random.choice(a=self.x, size=self.data_len, replace=False, p=self.p)
     
     def sample(self):
